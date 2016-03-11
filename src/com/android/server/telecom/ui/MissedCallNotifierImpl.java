@@ -68,10 +68,10 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.style.RelativeSizeSpan;
 
-import java.lang.Override;
-import java.lang.String;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.lang.Override;
+import java.lang.String;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -415,7 +415,7 @@ public class MissedCallNotifierImpl extends CallsManagerListenerBase implements 
         // Reset the list of missed calls
         mMissedCalls.clear();
 
-        if (sendNotificationCustomComponent(null, mMissedCallCount)) {
+        if (sendNotificationCustomComponent(null, mMissedCalls.size())) {
             return;
         }
 
@@ -673,3 +673,4 @@ public class MissedCallNotifierImpl extends CallsManagerListenerBase implements 
                 where.toString(), null, Calls.DEFAULT_SORT_ORDER);
     }
 }
+
