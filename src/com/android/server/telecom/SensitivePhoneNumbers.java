@@ -19,6 +19,7 @@ package com.android.server.telecom;
 
 import android.content.Context;
 import android.os.Environment;
+import android.telephony.PhoneNumberUtils;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -86,8 +87,11 @@ public class SensitivePhoneNumbers {
             if ("sensitivePN".equals(name)) {
                 SensitivePhoneNumber sensitivePN = SensitivePhoneNumber
                         .readSensitivePhoneNumbers(parser);
-                mSensitiveNumbersMap.put(sensitivePN.getNetworkNumeric(),
-                        sensitivePN.getPhoneNumbers());
+                String[] mccs = sensitivePN.getNetworkNumeric().split(",");
+                ArrayList<String> sensitive_nums = sensitivePN.getPhoneNumbers();
+                for (String mcc : mccs) {
+                    mSensitiveNumbersMap.put(mcc, sensitive_nums);
+                }
             } else {
                 break;
             }
@@ -108,8 +112,13 @@ public class SensitivePhoneNumbers {
         String networkUsed = telephonyManager.getNetworkOperator(subIdInt);
         if (!TextUtils.isEmpty(networkUsed)) {
             String networkMCC = networkUsed.substring(0, 3);
-            return mSensitiveNumbersMap.containsKey(networkMCC) &&
-                   mSensitiveNumbersMap.get(networkMCC).contains(numberToCheck);
+            if (mSensitiveNumbersMap.containsKey(networkMCC)) {
+                for (String num : mSensitiveNumbersMap.get(networkMCC)) {
+                    if (PhoneNumberUtils.compare(numberToCheck, num)) {
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }
